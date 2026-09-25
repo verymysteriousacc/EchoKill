@@ -11,51 +11,52 @@ int main(int argc, char **argv) {
     }
 
     int count = argc >= 3 ? atoi(argv[2]) : 10;
-    int interval = argc >= 4 ? atoi(argv[3]) : 1;
+    double interval = argc >= 4 ? atof(argv[3]) : 0.5;
 
-    if (count <= 0 || interval <= 0) {
-        fprintf(stderr, "Invalid count or interval\n");
+    if (count <= 0) {
+        fprintf(stderr, "Invalid count\n");
         return 1;
     }
 
-    char count_arg[16];
-    char interval_arg[16];
-
-    snprintf(count_arg, sizeof(count_arg), "%d", count);
-    snprintf(interval_arg, sizeof(interval_arg), "%d", interval);
-
-    pid_t pid = fork();
-
-    if (pid < 0) {
-        perror("fork");
+    if (interval < 0.5) {
+        fprintf(stderr, "Minimum interval is 0.5 seconds\n");
         return 1;
     }
 
-    if (pid == 0) {
-        execl(
-            "/system/bin/ping",
-            "ping",
-            "-c",
-            count_arg,
-            "-i",
-            interval_arg,
-            argv[1],
-            (char *)NULL
-        );
+    useconds_t delay = (useconds_t)(interval * 1000000.0);
 
-        perror("execl");
-        _exit(1);
+    for (int i = 0; i < count; i++) {
+        pid_t pid = fork();
+
+        if (pid < 0) {
+            perror("fork");
+            return 1;
+        }
+
+        if (pid == 0) {
+            execl(
+                "/system/bin/ping",
+                "ping",
+                "-c",
+                "1",
+                argv[1],
+                (char *)NULL
+            );
+
+            perror("execl");
+            _exit(1);
+        }
+
+        int status;
+
+        if (waitpid(pid, &status, 0) < 0) {
+            perror("waitpid");
+            return 1;
+        }
+
+        if (i + 1 < count)
+            usleep(delay);
     }
 
-    int status;
-
-    if (waitpid(pid, &status, 0) < 0) {
-        perror("waitpid");
-        return 1;
-    }
-
-    if (WIFEXITED(status))
-        return WEXITSTATUS(status);
-
-    return 1;
+    return 0;
 }
