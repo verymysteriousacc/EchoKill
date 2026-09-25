@@ -4,6 +4,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+fprintf(stderr, "Lol welcome (10 packets modified main)");
+
 int main(int argc, char **argv) {
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <host> [count] [interval]\n", argv[0]);
@@ -33,7 +35,7 @@ int main(int argc, char **argv) {
                 "/system/bin/ping",
                 "ping",
                 "-c",
-                "0",
+                "10",
                 argv[1],
                 (char *)NULL
             );
