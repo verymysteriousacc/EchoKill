@@ -4,12 +4,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-int main(void) {
-    printf("Hello welcome the name sucks (10 packets per sec)\n");
-    return 0;
-}
-
 int main(int argc, char **argv) {
+    printf("Hello welcome the name sucks (10 packets per sec)\n");
+
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <host> [count] [interval]\n", argv[0]);
         return 1;
