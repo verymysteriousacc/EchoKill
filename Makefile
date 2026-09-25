@@ -8,12 +8,12 @@ OBJ = $(SRC:.c=.o)
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
-        $(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
 
 %.o: %.c
-        $(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-        rm -f $(OBJ) $(TARGET)
+	rm -f $(OBJ) $(TARGET)
 
 .PHONY: all clean
