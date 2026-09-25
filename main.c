@@ -18,11 +18,6 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    if (interval < 0.5) {
-        fprintf(stderr, "Minimum interval is 0.5 seconds\n");
-        return 1;
-    }
-
     useconds_t delay = (useconds_t)(interval * 1000000.0);
 
     for (int i = 0; i < count; i++) {
@@ -38,7 +33,7 @@ int main(int argc, char **argv) {
                 "/system/bin/ping",
                 "ping",
                 "-c",
-                "1",
+                "0",
                 argv[1],
                 (char *)NULL
             );
