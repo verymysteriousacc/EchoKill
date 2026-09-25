@@ -6,16 +6,23 @@
 
 int main(int argc, char **argv) {
     if (argc < 2) {
-        fprintf(stderr, "Usage: %s <host> [count]\n", argv[0]);
+        fprintf(stderr, "Usage: %s <host> [count] [interval]\n", argv[0]);
         return 1;
     }
 
-    int count = argc >= 3 ? atoi(argv[2]) : 4;
+    int count = argc >= 3 ? atoi(argv[2]) : 10;
+    int interval = argc >= 4 ? atoi(argv[3]) : 1;
 
-    if (count <= 0) {
-        fprintf(stderr, "Invalid count\n");
+    if (count <= 0 || interval <= 0) {
+        fprintf(stderr, "Invalid count or interval\n");
         return 1;
     }
+
+    char count_arg[16];
+    char interval_arg[16];
+
+    snprintf(count_arg, sizeof(count_arg), "%d", count);
+    snprintf(interval_arg, sizeof(interval_arg), "%d", interval);
 
     pid_t pid = fork();
 
@@ -25,14 +32,13 @@ int main(int argc, char **argv) {
     }
 
     if (pid == 0) {
-        char count_arg[16];
-        snprintf(count_arg, sizeof(count_arg), "%d", count);
-
         execl(
             "/system/bin/ping",
             "ping",
             "-c",
             count_arg,
+            "-i",
+            interval_arg,
             argv[1],
             (char *)NULL
         );
